@@ -2,7 +2,8 @@
 Face Recognition App for Algerian TV Channels
 Overview
 This Python application is designed to recognize public faces from Algeria in TV channels. It takes a video as input and compares the faces detected in the video with a predefined database of known faces. If a match is found, the corresponding person is marked, and a report is generated indicating when that person appears in the video.
-
+this app is inspired by this tutorial : https://www.youtube.com/watch?v=iBomaK2ARyI&t=29s
+thank you <3
 ## Features
 **Face Detection:** Detect faces in the input video using computer vision techniques.
 
