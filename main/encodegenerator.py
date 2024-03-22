@@ -3,7 +3,7 @@ import face_recognition
 import pickle
 import os
 
-folderpath = 'images'
+folderpath = '../images'
 Pathlist = os.listdir(folderpath)
 imgList = []
 publicIDS = []
@@ -30,4 +30,3 @@ file = open("encodeFile.p","wb")
 pickle.dump(encodeListKnownwithIDS,file)
 file.close()
 print("file saved")
-
