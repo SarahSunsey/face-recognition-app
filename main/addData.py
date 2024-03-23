@@ -32,13 +32,6 @@ data={
         "job" : "President of algeria" ,
         "total_Attandance" :0,
 
-    },
-    "3":{
-        #key : value
-        "name": "Abdelmadjid Tebboune",
-        "job" : "President of algeria" ,
-        "total_Attandance" :0,
-
     }
 }
 for key,value in data.items():
