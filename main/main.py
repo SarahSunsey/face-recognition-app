@@ -7,7 +7,7 @@ import numpy as np
 
 # Open the video file
 video_path = 'main/tebboune.mp4'
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(video_path)
 
 # Read the background image
 imgBackground = cv2.imread('recources/background.png')
