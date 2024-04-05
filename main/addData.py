@@ -33,6 +33,9 @@ data={
         "total_Attandance" :0,
 
     }
+    "4":{
+        "name":"ghwjw"
+    }
 }
 for key,value in data.items():
     ref.child(key).set(value)

@@ -2,7 +2,6 @@ import cv2
 import os
 import pickle
 import face_recognition
-import time
 import numpy as np
 
 # Open the video file
@@ -54,18 +53,19 @@ while True:
         cv2.rectangle(img, (left, top), (right, bottom), (203, 192, 255), 2)
 
         # Print the current time when a face is matched
-        '''for i, match in enumerate(matches):
-            if match:
-                matched_id = Publicids[i]
-                print("Face matched at:", time.strftime('%Y-%m-%d %H:%M:%S'), "ID:", matched_id)
-'''
         matchindex=np.argmin(faceDis)
-        #print("Match index",matchindex)
         if matches[matchindex]:
-            pass
-            # print("known face detected face : ",Publicids[matchindex])
+            # Get current frame number
+            frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+            # Get frame rate
+            frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
+            # Calculate current time in seconds
+            current_time_seconds = frame_number / frame_rate
+            # Convert seconds to minutes
+            current_time_minutes = current_time_seconds / 60
+            print("Face detected at minute:", current_time_minutes)
+
     # Replace the region in imgBackground with the resized frame
-            
     imgBackground[162:162 + 480, 55:55 + 640] = img
     imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[0]
 
