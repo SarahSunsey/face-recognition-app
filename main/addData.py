@@ -10,32 +10,49 @@ firebase_admin.initialize_app(cred,{
 
 ref = db.reference('publicPersonality')
 
-data={
-
-    "1":{
-        #key : value
+data = {
+    "1": {
         "name": "Kamel Baddari",
-        "job" : "minister of higher education" ,
-        "total_Attandance" :0,
-
+        "job": "Minister of Higher Education",
+        "total_Attendance": 0,
     },
-    "2":{
-        #key : value
+    "2": {
         "name": "Issad Rebrab",
-        "job" : "Buisnessmen" ,
-        "total_Attandance" :0,
-
+        "job": "Businessman",
+        "total_Attendance": 0,
     },
-    "3":{
-        #key : value
+    "3": {
         "name": "Abdelmadjid Tebboune",
-        "job" : "President of algeria" ,
-        "total_Attandance" :0,
-
-    }
-    "4":{
-        "name":"ghwjw"
+        "job": "President of Algeria",
+        "total_Attendance": 0,
     }
 }
+
+# Add new entries to the data dictionary
+data["4"] = {
+    "name": "Hilary Clinton",
+    "job": "Politician",
+    "total_Attendance": 0,
+}
+
+data["5"] = {
+    "name": "Yasmina Khedra",
+    "job": "Writer",
+    "total_Attendance": 0,
+}
+
+data["6"] = {
+    "name": "Elon Musk",
+    "job": "Entrepreneur",
+    "total_Attendance": 0,
+}
+
+data["7"] = {
+    "name": "Rachid Nekaz",
+    "job": "Activist",
+    "total_Attendance": 0,
+}
+
+
 for key,value in data.items():
     ref.child(key).set(value)
