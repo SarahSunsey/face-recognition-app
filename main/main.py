@@ -2,11 +2,17 @@ import cv2
 import os
 import pickle
 import face_recognition
+from mtcnn import MTCNN
 import numpy as np
 
 # Open the video file
 video_path = 'main/tebboune.mp4'
 cap = cv2.VideoCapture(video_path)
+
+detector = MTCNN()
+frame_skip = 20  # Process every 3rd frame
+resize_factor = 0.8  # Resize frames to 50% of their original size
+frame_count=0
 
 # Read the background image
 imgBackground = cv2.imread('recources/background.png')
@@ -32,19 +38,32 @@ while True:
     if not success:
         print("End of video.")
         break
-
+    frame_count += 1
+    if frame_count % frame_skip != 0:
+        continue
     # Resize the frame to match the size of the region in imgBackground
     img = cv2.resize(img, (640, 480))
     imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
     imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
 
-    faceCurFrame = face_recognition.face_locations(imgS)
-    encodeCurFrame = face_recognition.face_encodings(imgS, faceCurFrame)
-    for encodeFace, faceLoc in zip(encodeCurFrame, faceCurFrame):
-        matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
-        faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
+    faceCurFrame = detector.detect_faces(imgS)    
+    
+    encodeCurFrame = []
+    for faceLoc in faceCurFrame:
+        print((faceLoc))
         
-        # Draw rectangle around the face
+        print("hey")
+        if len(faceLoc) != 4:
+        # Skip processing if the face location doesn't have four elements
+            continue
+        top, right, bottom, left  = faceLoc
+        face_img = imgS[top:bottom, left:right]  # Extract the face region from the image
+        encodeFace = face_recognition.face_encodings(face_img)
+        if encodeFace:
+            encodeCurFrame.append(encodeFace[0])
+    
+    for encodeFace, faceLoc in zip(encodeCurFrame, faceCurFrame):
+        
         top, right, bottom, left = faceLoc
         top *= 4
         right *= 4
@@ -53,6 +72,8 @@ while True:
         cv2.rectangle(img, (left, top), (right, bottom), (203, 192, 255), 2)
 
         # Print the current time when a face is matched
+        matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
+        faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
         matchindex=np.argmin(faceDis)
         if matches[matchindex]:
             # Get current frame number
