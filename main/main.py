@@ -4,14 +4,29 @@ import os
 import pickle
 import numpy as np
 import face_recognition  # Ensure face_recognition is properly installed
+import firebase_admin
+from firebase_admin import db
+import cvzone
+import os
+
+from firebase_admin import storage
+from firebase_admin import credentials
+
+cred = credentials.Certificate("main/serviceAccountkey.json")
+
+firebase_admin.initialize_app(cred,{
+    'databaseURL':"https://tvapp-d8049-default-rtdb.firebaseio.com/",
+    'storageBucket':"tvapp-d8049.appspot.com"  # Corrected parameter name
+})
+bucket = storage.bucket()
 
 # Initialize MTCNN detector
 detector = MTCNN()
 
 # Open the video file
-video_path = 'main/tebboune.mp4'
+video_path = 'main/faces2.mp4'
 cap = cv2.VideoCapture(video_path)
-
+imgpublic=[]
 # Read the background image
 imgBackground = cv2.imread('recources/background.png')
 
@@ -28,10 +43,13 @@ file.close()
 encodeListKnown, Publicids = encodeListKnownWithIds
 print("Encode File Loaded")
 
-frame_skip = 10  # Process every 20th frame
+frame_skip = 10  # Process every 10th frame
 resize_factor = 0.8  # Resize frames to 80% of their original size
 frame_count = 0
-
+modeType = 0
+output_file_path = ""
+counter =0
+x=0
 while True:
     ret, frame = cap.read()
     if not ret:
@@ -50,6 +68,7 @@ while True:
     
     # Detect faces using MTCNN
     faces = detector.detect_faces(rgb_frame)
+    # Replace the region in imgBackground with the resized frame
     
     for face in faces:
         x, y, w, h = face['box']
@@ -79,23 +98,96 @@ while True:
             matchindex = np.argmin(faceDis)
             if matches[matchindex]:
                 # Get current frame number
-                frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-                # Get frame rate
-                frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
-                # Calculate current time in seconds
-                current_time_seconds = frame_number / frame_rate
-                # Convert seconds to minutes
-                current_time_minutes = current_time_seconds / 60
+                if counter ==0:
+                    frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+                    # Get frame rate
+                    frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
+                    # Calculate current time in seconds
+                    current_time_seconds = frame_number / frame_rate
+                    # Convert seconds to minutes
+                    current_time_minutes = current_time_seconds / 60
 
-                # Format the current time to display only two decimal places
-                current_time_formatted = "{:.2f}".format(current_time_minutes)
-                print("Face detected at minute:", current_time_formatted)
+                    # Format the current time to display only two decimal places
+                    
+                    print("Face detected at : ",current_time_seconds)
+                    info=db.reference(f'publicPersonality/{id}').get()
+                    
+                    if info is not None:
+                                            # Extract name from info (assuming info is a dictionary)
+                        name = str(info['name'])
 
+                        # Construct the output file path
+                        filename = name + ".txt"
+                        output_file_path = os.path.join('main/rapport', filename)
 
-    # Replace the region in imgBackground with the resized frame
+                        try:
+                            # Attempt to open the file in append mode ('a')
+                            with open(output_file_path, 'a') as file:
+                                # Write the face detection information into the file
+                                file.write(f"Face detected at: {current_time_seconds}\n")
+                                print(f"Face detection information appended to '{output_file_path}'.")
+                        except FileNotFoundError:
+                            # File does not exist, so create it and write the content
+                            with open(output_file_path, 'w') as file:
+                                # Write the face detection information into the file
+                                file.write(f"ABDELMAJID TEBBOUNE RAPPORT :")
+                                file.write(f"Face detected at: {current_time_seconds}\n")
+                                print(f"File '{output_file_path}' created and face detection information written.")
+
+                id = Publicids[matchindex]
+                if counter == 0 :
+                    cvzone.putTextRect(imgBackground,"LOADING",(275,400))
+                    cv2.imshow("TV face",imgBackground)
+                    cv2.waitKey(1)
+                    counter =1 
+                    modeType=1
     imgBackground[162:162 + frame_resized.shape[0], 55:55 + frame_resized.shape[1]] = frame_resized
+    imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[modeType]
+    if counter !=0:
+        if counter ==1:
+            #get data
+            publicInfo = db.reference(f'publicPersonality/{id}').get()
+            #print(publicInfo)
+            #get image
+            
+            blob = bucket.get_blob(f'images/{id}.jpg')
+            
+            array = np.frombuffer(blob.download_as_string(), np.uint8)
+            imgpublic = cv2.imdecode(array, cv2.COLOR_BGRA2BGR)
+            
+            #update attandance
+            ref = db.reference(f'publicPersonality/{id}')
+            publicInfo['total_Attendance'] += 1
+            ref.child('total_Attendance').set(publicInfo['total_Attendance'])
+            
+                
 
+        #print(str(publicInfo['total_Attendance']))
+        if 5< counter <=10 :
+            modeType=2
+        imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[modeType]
+        if counter <=5:
+            cv2.putText(imgBackground, str(publicInfo['total_Attendance']), (861, 125),
+                                    cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+            
+            cv2.putText(imgBackground,str(publicInfo['job']),(925,550),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,0,0),2)
+            cv2.putText(imgBackground,str(publicInfo['name']),(925,493),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,0,0),2)
+            imgBackground[175:175 + 216, 909:909 + 216] = imgpublic
+
+        counter+=1
+    if counter >10:
+        counter=0
+        modeType=0
+        publicInfo=[]
+        imgpublic=[]
+        imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[modeType]
+       
+    
+    
+   
+        
     # Display the combined image
+
     cv2.imshow("TV face", imgBackground)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
