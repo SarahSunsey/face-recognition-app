@@ -1,5 +1,11 @@
 # this code is provided to get the coordinates of a point selected in an image
 import cv2
+import sys
+
+
+print("hey")
+print("Number of arguments:", len(sys.argv))
+print("Arguments:", sys.argv)
 
 def click_event(event, x, y, flags, param):
     # Check for left mouse button click
@@ -11,7 +17,7 @@ def click_event(event, x, y, flags, param):
         cv2.imshow("Image", img)
 
 # Read the image
-img = cv2.imread("recources/background.png")
+img = cv2.imread("main/parameterPAGE.png")
 
 # Create a window for displaying the image
 cv2.namedWindow("Image")
@@ -26,4 +32,4 @@ cv2.imshow("Image", img)
 cv2.waitKey(0)
 
 # Close all windows
-cv22.destroyAllWindows()
+cv2.destroyAllWindows()

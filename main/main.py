@@ -8,7 +8,7 @@ import firebase_admin
 from firebase_admin import db
 import cvzone
 import os
-
+import sys
 from firebase_admin import storage
 from firebase_admin import credentials
 
@@ -20,11 +20,22 @@ firebase_admin.initialize_app(cred,{
 })
 bucket = storage.bucket()
 
-# Initialize MTCNN detector
+print("Number of arguments:", len(sys.argv))
+print("Arguments:", sys.argv)
+
+#get name video
+if len(sys.argv) > 1:
+    hotspot_name = sys.argv[1]
+    print(f"Received hotspot name: {hotspot_name}")
+    # Use the hotspot_name as needed in your application logic
+else:
+    print("No hotspot name provided.")
+
 detector = MTCNN()
 
+
 # Open the video file
-video_path = 'main/faces2.mp4'
+video_path = f'main/{hotspot_name}.mp4'
 cap = cv2.VideoCapture(video_path)
 imgpublic=[]
 # Read the background image
@@ -104,8 +115,10 @@ while True:
                     frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
                     # Calculate current time in seconds
                     current_time_seconds = frame_number / frame_rate
-                    # Convert seconds to minutes
-                    current_time_minutes = current_time_seconds / 60
+                    if current_time_seconds > 60 :
+                        x==1
+                    if x==1:
+                        current_time_seconds= current_time_seconds / 60
 
                     # Format the current time to display only two decimal places
                     
