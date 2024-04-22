@@ -29,7 +29,13 @@ def unset_hover_effect(event):
 
 def on_image_click(event):
     print("Image button clicked!")
-    # Call your desired function here
+    # Launch parameter.py using subprocess
+    launch_parameter()
+
+def launch_parameter():
+    # Command to run parameter.py
+    cmd = ["python", "main/parameter.py"]
+    subprocess.Popen(cmd)
 
 # Create main window
 window = tk.Tk()

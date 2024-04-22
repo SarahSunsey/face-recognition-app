@@ -1,5 +1,10 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+import webbrowser
+import threading
+import http.server
+import socketserver
+import os
 
 # Define the coordinates and button texts
 button_data = [
@@ -21,12 +26,30 @@ def on_leave(event):
 def create_buttons_on_canvas(canvas):
     for (x, y, text) in button_data:
         # Create button with custom style
-        button = tk.Button(canvas, text=text, width=25,height=2, font=("Helvetica", 16), bg="#4165E3", fg="white")
+        button = tk.Button(canvas, text=text, width=25, height=2, font=("Helvetica", 16), bg="#4165E3", fg="white")
         button_window = canvas.create_window(x, y, anchor='nw', window=button)
 
         # Bind hover events to buttons
         button.bind("<Enter>", on_enter)
         button.bind("<Leave>", on_leave)
+
+        # Add command to the "Afficher bases de données" button
+        if text == "Afficher bases de données":
+            button.config(command=open_web_server)
+
+# Function to open a web browser with the local server hosting the bdd.html file
+def open_web_server():
+    # Start a local web server
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    Handler = http.server.SimpleHTTPRequestHandler
+    httpd = socketserver.TCPServer(("localhost", 0), Handler)
+    port = httpd.server_address[1]
+
+    # Open the web browser
+    webbrowser.open(f"http://localhost:{port}/bdd.html")
+
+    # Start serving the files in a separate thread
+    threading.Thread(target=httpd.serve_forever).start()
 
 # Main function to create the GUI
 def main():
