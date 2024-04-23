@@ -144,21 +144,21 @@ function addingITEMStotable(data) {
     pubNum = 0;
     tbody.innerHTML = "";
     data.forEach((element, index) => {
-        let imgSrc = `./images/${index + 1}.jpg`; // Construct image source path dynamically
+        let imgSrc = `/images/${index + 1}.jpg`; // Construct image source path dynamically
         addItemToTable(element.name, element.job, element.total_Attendance, imgSrc);
     });
 }
 
-const firebaseConfig = {
-  apiKey: "AIzaSyB5k_VHFDLx1KRjzZrQbMoM4R5YWQ35jMQ",
-  authDomain: "tvapp-d8049.firebaseapp.com",
-  databaseURL: "https://tvapp-d8049-default-rtdb.firebaseio.com",
-  projectId: "tvapp-d8049",
-  storageBucket: "tvapp-d8049.appspot.com",
-  messagingSenderId: "275586054293",
-  appId: "1:275586054293:web:daacd78f583d86f17c439c",
-  measurementId: "G-YB9CQZNPWF"
-};
+        const firebaseConfig = {
+    apiKey: "AIzaSyB5k_VHFDLx1KRjzZrQbMoM4R5YWQ35jMQ",
+    authDomain: "tvapp-d8049.firebaseapp.com",
+    databaseURL: "https://tvapp-d8049-default-rtdb.firebaseio.com",
+    projectId: "tvapp-d8049",
+    storageBucket: "tvapp-d8049.appspot.com",
+    messagingSenderId: "275586054293",
+    appId: "1:275586054293:web:daacd78f583d86f17c439c",
+    measurementId: "G-YB9CQZNPWF"
+  };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 

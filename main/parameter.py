@@ -1,55 +1,57 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import webbrowser
-import threading
-import http.server
-import socketserver
-import os
+import subprocess
+import webbrowser  # Import webbrowser module to open webpages
 
 # Define the coordinates and button texts
 button_data = [
     (820, 270, "Ajouter personne"),
-    (300, 270, "Afficher bases de données"),
+    (300, 270, "Afficher bases de données"),  # Target button
     (300, 540, "Supprimer personne"),
     (820, 540, "Afficher rapport")
 ]
+
 
 # Function to handle button hover enter event
 def on_enter(event):
     event.widget.config(bg="#2247CC", cursor="hand2")
 
+
 # Function to handle button hover leave event
 def on_leave(event):
     event.widget.config(bg="#4165E3", cursor="arrow")
 
-# Function to create styled buttons on canvas
+
+# Function to create styled buttons on canvas and handle button click
 def create_buttons_on_canvas(canvas):
     for (x, y, text) in button_data:
         # Create button with custom style
         button = tk.Button(canvas, text=text, width=25, height=2, font=("Helvetica", 16), bg="#4165E3", fg="white")
-        button_window = canvas.create_window(x, y, anchor='nw', window=button)
 
         # Bind hover events to buttons
         button.bind("<Enter>", on_enter)
         button.bind("<Leave>", on_leave)
 
-        # Add command to the "Afficher bases de données" button
+        # Check if the button text matches the target action
         if text == "Afficher bases de données":
-            button.config(command=open_web_server)
+            def open_bdd_html():
+                # Replace with the actual URL of your bdd.html file (if hosted online)
+                bdd_html_url = "http://127.0.0.1:5500/main/bdd.html"  # Modify as needed
+                webbrowser.open(bdd_html_url)
 
-# Function to open a web browser with the local server hosting the bdd.html file
-def open_web_server():
-    # Start a local web server
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    Handler = http.server.SimpleHTTPRequestHandler
-    httpd = socketserver.TCPServer(("localhost", 0), Handler)
-    port = httpd.server_address[1]
+            # Bind the click action to the button
+            button.config(command=open_bdd_html)
+        if text == "Ajouter personne":
+            def open_add_person_script():
+                subprocess.run(["python", "main/addperson.py"])
 
-    # Open the web browser
-    webbrowser.open(f"http://localhost:{port}/bdd.html")
+            button.config(command=open_add_person_script)
 
-    # Start serving the files in a separate thread
-    threading.Thread(target=httpd.serve_forever).start()
+        button_window = canvas.create_window(x, y, anchor='nw', window=button)
+
+        # Add the button to the canvas
+        button_window = canvas.create_window(x, y, anchor='nw', window=button)
+
 
 # Main function to create the GUI
 def main():
@@ -74,6 +76,7 @@ def main():
 
     # Start the main loop
     root.mainloop()
+
 
 if __name__ == "__main__":
     main()
