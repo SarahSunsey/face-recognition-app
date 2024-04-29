@@ -14,7 +14,7 @@ data = {
     "1": {
         "name": "Kamel Baddari",
         "job": "Ministre de l'Enseignement Supérieur",
-        "total_Attendance": 0,
+        "total_Attendance": 3,
     },
     "2": {
         "name": "Issad Rebrab",

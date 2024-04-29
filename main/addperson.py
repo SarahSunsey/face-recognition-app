@@ -4,6 +4,7 @@ import os
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import tkinter as tk
 
 cred = credentials.Certificate("main/serviceAccountkey.json")
 
@@ -17,13 +18,13 @@ ref = db.reference('publicPersonality')
 def get_image_path():
     """Opens a file dialog to select an image."""
     image_path = filedialog.askopenfilename(
-        initialdir="/", title="Select Image", filetypes=[("Image Files", "*.jpg;*.png;*.jpeg")]
+        initialdir="/", title="Sélectionner une image", filetypes=[("Image Files", "*.jpg;*.png;*.jpeg")]
     )
     if image_path:
         image_path_var.set(image_path)  # Set the image path in the StringVar
         print(image_path)
     else:
-        message_label.config(text="Please select an image.", fg="red")
+        message_label.config(text="Veuillez sélectionner une image.", fg="red")
 
 def save_user_info():
     """Retrieves form data, generates a filename based on index, and saves information."""
@@ -32,13 +33,20 @@ def save_user_info():
     image_path = image_path_var.get()  # Get the image path from StringVar
     print(image_path)
     if not name or not job or not image_path:
-        message_label.config(text="Please fill in all fields.", fg="red")
+        message_label.config(text="Veuillez remplir tous les champs.", fg="red")
         return
 
     # Get the latest image index or start from 1 if no images exist
-    latest_index = 0
+    latest_index =0
     for filename in os.listdir("images"):
-        latest_index=latest_index+1
+        # Check if the filename is a number
+        try:
+            number = int(filename.split(".")[0])  # Extract number before extension
+            if number > latest_index:
+                latest_index = number
+        except ValueError:
+            pass  # Ignore non-numeric filenames
+    latest_index+=1
     print(latest_index)
     # Generate new filename with incremented index (adjust extension as needed)
     new_filename = f"images/{latest_index }.jpg"  # Adjust extension based on image type
@@ -48,7 +56,7 @@ def save_user_info():
         with open(new_filename, "wb") as image_file:
             with open(image_path, "rb") as f:
                 image_file.write(f.read())
-        message_label.config(text="Information saved successfully!", fg="green")
+        message_label.config(text="Les informations ont été enregistrées avec succès !", fg="green")
 
     except FileNotFoundError:
         message_label.config(text="Error: Could not find the selected image.", fg="red")
@@ -60,8 +68,7 @@ def save_user_info():
     user_info = {
         "name": name,
         "job": job,
-          # Store the image path as well
-        "total_attendance": 0,
+        "total_Attendance": 0,
     }
 
     next_key = latest_index   # Call the get_highest_key function
@@ -78,32 +85,51 @@ def save_user_info():
 
 # Create the main window
 window = Tk()
-window.title("User Information Form")
+window.configure(bg='#5678F0')
+window.title("Ajouter une personne")
+icon_image = tk.PhotoImage(file='main/logoAPP.png')
+window.iconphoto(True, icon_image)
 # Name label and entry
-name_label = Label(window, text="Name:")
-name_label.grid(row=0, column=0, padx=5, pady=5)
+def set_styles():
+    # Label style
+    label_style = {'font': ('Arial', 17), 'fg': 'white', 'bg': '#5678F0', 'padx': 10, 'pady': 5}
 
-name_entry = Entry(window, width=30)
-name_entry.grid(row=0, column=1, padx=5, pady=5)
+    # Entry style
+    entry_style = {'font': ('Arial', 17), 'fg': 'white', 'bg': '#5678F0', 'width': 25, 'borderwidth': 2}
 
-# Job label and entry
-job_label = Label(window, text="Job:")
-job_label.grid(row=1, column=0, padx=5, pady=5)
+    return label_style, entry_style
 
-job_entry = Entry(window, width=30)
-job_entry.grid(row=1, column=1, padx=5, pady=5)
+# Function to create and grid labels
+def create_and_grid_labels(label_text, row_num, col_num):
+    label_style, _ = set_styles()
+    label = tk.Label(window, text=label_text, **label_style)
+    label.grid(row=row_num, column=col_num, sticky='w', padx=5, pady=5)
+
+# Function to create and grid entry widgets
+def create_and_grid_entry(row_num, col_num):
+    _, entry_style = set_styles()
+    entry = tk.Entry(window, **entry_style)
+    entry.grid(row=row_num, column=col_num, padx=5, pady=5)
+    return entry
+
+# Create and grid labels and entry widgets
+create_and_grid_labels("Nom Complet:", 0, 0)
+name_entry = create_and_grid_entry(0, 1)
+
+create_and_grid_labels("Metier:", 1, 0)
+job_entry = create_and_grid_entry(1, 1)
 
 # Image selection button
 image_path_var = StringVar()  # To store the image path
-image_button = Button(window, text="Select Image", command=get_image_path)
+image_button = Button(window, text="Choisir image", command=get_image_path, bg="#82EE5C")
 image_button.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 
 # Message label for success or error messages
-message_label = Label(window, text="")
+message_label = Label(window, text="",bg="#5678F0")
 message_label.grid(row=3, column=0, columnspan=2, padx=5, pady=5)
 
 # Submit button
-submit_button = Button(window, text="Submit", command=save_user_info)
+submit_button = tk.Button(window, text="Soumettre",width="20", command=save_user_info, bg="#82EE5C", fg="black")  # Set background color to blue and foreground (text) color to white
 submit_button.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
 
 window.mainloop()

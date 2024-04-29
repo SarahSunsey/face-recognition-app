@@ -57,7 +57,9 @@ def create_buttons_on_canvas(canvas):
 def main():
     # Create main window
     root = tk.Tk()
-    root.title("Background Image with Buttons")
+    root.title("Prametres")
+    icon_image = tk.PhotoImage(file='main/logoAPP.png')
+    root.iconphoto(True, icon_image)
 
     # Load the background image
     image_path = "main/parameterPAGE.png"  # Replace this with your image path

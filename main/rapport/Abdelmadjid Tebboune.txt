@@ -109,3 +109,16 @@ Face detected at: 72.0
 Face detected at: 76.0
 Face detected at: 76.0
 Face detected at: 4.4
+Face detected at: 4.4
+Face detected at: 8.4
+Face detected at: 12.4
+Face detected at: 16.4
+Face detected at: 20.4
+Face detected at: 4.4
+Face detected at: 8.4
+Face detected at: 12.4
+Face detected at: 16.4
+Face detected at: 20.4
+Face detected at: 24.4
+Face detected at: 28.4
+Face detected at: 34.4

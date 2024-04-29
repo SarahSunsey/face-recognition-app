@@ -10,6 +10,7 @@
         body, h1, h2, h3, p, ul, ol, li, table, th, td {
             margin: 0;
             padding: 0;
+
         }
 
         /* Set a default font family and size */
@@ -17,7 +18,7 @@
             font-family: Arial, sans-serif;
             font-size: 16px;
             line-height: 1.6;
-            background-color: #f4f4f4;
+            background-color: #83ee5c8f;
             padding: 20px;
         }
 
@@ -75,8 +76,9 @@
         }
 
         h1 {
-            color: rgb(7, 7, 74);
+            color: #2247CC;
             margin-bottom: 10px;
+            text-align: center;
         }
     </style>
 </head>
@@ -107,7 +109,7 @@
         var pubNum = 0;
         var tbody = document.getElementById('tbody1');
 
-        function addItemToTable(Nom, travail, Nbrapp, imgSrc) {
+        function addItemToTable(docId, Nom, travail, Nbrapp, imgSrc) {
     let trow = document.createElement("tr");
     
     // Create table data cells
@@ -118,7 +120,7 @@
     let td5 = document.createElement('td');
 
     // Assign text content to cells
-    td1.textContent = ++pubNum;
+    td1.textContent = docId; // Display the document ID (key)
     td2.textContent = Nom;
     td3.textContent = travail;
     td4.textContent = Nbrapp;
@@ -139,15 +141,14 @@
     // Append row to table body
     tbody.appendChild(trow);
 }
-
 function addingITEMStotable(data) {
-    pubNum = 0;
-    tbody.innerHTML = "";
-    data.forEach((element, index) => {
-        let imgSrc = `/images/${index + 1}.jpg`; // Construct image source path dynamically
-        addItemToTable(element.name, element.job, element.total_Attendance, imgSrc);
+    tbody.innerHTML = ""; // Clear existing table rows
+    data.forEach((element) => {
+        let imgSrc = `/images/${element.id}.jpg`; // Construct image source path using the document ID
+        addItemToTable(element.id, element.name, element.job, element.total_Attendance, imgSrc);
     });
 }
+
 
         const firebaseConfig = {
     apiKey: "AIzaSyB5k_VHFDLx1KRjzZrQbMoM4R5YWQ35jMQ",
@@ -163,17 +164,20 @@ function addingITEMStotable(data) {
         const db = getDatabase(app);
 
         function getDataFromFirebase() {
-            const dbRef = ref(db, 'publicPersonality');
-            get(dbRef).then((snapshot) => {
-                const publicData = [];
-                snapshot.forEach((childSnapshot) => {
-                    publicData.push(childSnapshot.val());
-                });
-                addingITEMStotable(publicData);
-            }).catch((error) => {
-                console.error("Error getting data from Firebase:", error);
-            });
-        }
+    const dbRef = ref(db, 'publicPersonality');
+    get(dbRef).then((snapshot) => {
+        const publicData = [];
+        snapshot.forEach((childSnapshot) => {
+            const docId = childSnapshot.key; // Get the document ID (key)
+            console.log(docId)
+            const data = childSnapshot.val(); // Get the data associated with the document
+            publicData.push({ id: docId, ...data }); // Store document ID along with data
+        });
+        addingITEMStotable(publicData); // Pass data (including IDs) to populate table
+    }).catch((error) => {
+        console.error("Error getting data from Firebase:", error);
+    });
+}
 
         // Call the function to fetch data from Firebase and populate the table
         getDataFromFirebase();

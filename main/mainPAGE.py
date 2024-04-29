@@ -39,7 +39,9 @@ def launch_parameter():
 
 # Create main window
 window = tk.Tk()
-window.title("Transparent Hotspots")
+window.title("Page D'acceuil")
+icon_image = tk.PhotoImage(file='main/logoAPP.png')
+window.iconphoto(True, icon_image)
 
 # Load the image containing clickable areas
 image_path = "main/page.png"
