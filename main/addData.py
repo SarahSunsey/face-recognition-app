@@ -15,36 +15,43 @@ data = {
         "name": "Kamel Baddari",
         "job": "Ministre de l'Enseignement Supérieur",
         "total_Attendance": 3,
+        "date":"",
     },
     "2": {
         "name": "Issad Rebrab",
         "job": "Homme d'affaires",
         "total_Attendance": 0,
+        "date":"",
     },
     "3": {
         "name": "Abdelmadjid Tebboune",
         "job": "Président de l'Algérie",
         "total_Attendance": 0,
+        "date":"",
     },
     "4": {
         "name": "Hillary Clinton",
         "job": "Politicienne",
         "total_Attendance": 0,
+        "date":"",
     },
     "5": {
         "name": "Yasmina Khadra",
         "job": "Écrivain",
         "total_Attendance": 0,
+        "date":"",
     },
     "6": {
         "name": "Elon Musk",
         "job": "Entrepreneur",
         "total_Attendance": 0,
+        "date":"",
     },
     "7": {
         "name": "Rachid Nekaz",
         "job": "Militant",
         "total_Attendance": 0,
+        "date":"",
     }
 }
 

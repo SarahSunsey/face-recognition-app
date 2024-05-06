@@ -69,6 +69,7 @@ def save_user_info():
         "name": name,
         "job": job,
         "total_Attendance": 0,
+        "date":"",
     }
 
     next_key = latest_index   # Call the get_highest_key function

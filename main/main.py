@@ -11,7 +11,10 @@ import os
 import sys
 from firebase_admin import storage
 from firebase_admin import credentials
+import re
 
+timer=0
+strr=""
 cred = credentials.Certificate("main/serviceAccountkey.json")
 
 firebase_admin.initialize_app(cred,{
@@ -34,17 +37,36 @@ else:
 detector = MTCNN()
 
 
+def extract_date_time(filename):
+  
+  try:
+    # Split the filename based on delimiters
+    
+    parts = filename.split("-")
+    
+    day=parts[0]
+    month=parts[1]
+    year=parts[2]
+    hour=parts[3]
+    minute=parts[4]
+    print(day,month,year,hour,minute)
+    return day,month,year,hour,minute
+  except ValueError:
+    return "Invalid filename format"  # Handle format errors
 # Open the video file
-video_path = f'main/{hotspot_name}.mp4'
+video_path = f'main/TV/{hotspot_name}.mp4'
+day, month, year, hour, minute = extract_date_time(hotspot_name)
+print(day,month,year,hour,minute)
 cap = cv2.VideoCapture(video_path)
 imgpublic=[]
 # Read the background image
 imgBackground = cv2.imread('recources/background.png')
-
+frame_rate = cap.get(cv2.CAP_PROP_FPS)
 # Import images into a list
 folderModepath = 'recources/modes'
 modePathlist = os.listdir(folderModepath)
 imgModeList = [cv2.imread(os.path.join(folderModepath, path)) for path in modePathlist]
+
 
 # Load the encoding file
 print("Loading Encode File ...")
@@ -108,44 +130,37 @@ while True:
             # Print the current time when a face is matched
             matchindex = np.argmin(faceDis)
             if matches[matchindex]:
-                # Get current frame number
-                if counter ==0:
-                    frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-                    # Get frame rate
-                    frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
-                    # Calculate current time in seconds
-                    current_time_seconds = frame_number / frame_rate
-                    if current_time_seconds > 60 :
-                        x==1
-                    if x==1:
-                        current_time_seconds= current_time_seconds / 60
-
-                    # Format the current time to display only two decimal places
+                if timer==0:
+                    print (matchindex)
+                                # Calculate total time in seconds
+                    total_time_seconds = (float(hour) * 3600) + (float(minute) * 60) + (frame_count / frame_rate)
                     
-                    print("Face detected at : ",current_time_seconds)
-                    info=db.reference(f'publicPersonality/{id}').get()
+                    # Calculate hours, minutes, and remaining seconds
+                    matched_hours = int(total_time_seconds // 3600)
+                    matched_minutes = int((total_time_seconds % 3600) // 60)
+                    strr=str(matched_hours) + '.' + str(matched_minutes)
                     
-                    if info is not None:
-                                            # Extract name from info (assuming info is a dictionary)
-                        name = str(info['name'])
-
-                        # Construct the output file path
-                        filename = name + ".txt"
-                        output_file_path = os.path.join('main/rapport', filename)
-
-                        try:
-                            # Attempt to open the file in append mode ('a')
-                            with open(output_file_path, 'a') as file:
-                                # Write the face detection information into the file
-                                file.write(f"Face detected at: {current_time_seconds}\n")
-                                print(f"Face detection information appended to '{output_file_path}'.")
-                        except FileNotFoundError:
-                            # File does not exist, so create it and write the content
-                            with open(output_file_path, 'w') as file:
-                                # Write the face detection information into the file
-                                file.write(f"ABDELMAJID TEBBOUNE RAPPORT :")
-                                file.write(f"Face detected at: {current_time_seconds}\n")
-                                print(f"File '{output_file_path}' created and face detection information written.")
+                    matched_seconds = total_time_seconds % 60
+                    
+                    print("Matched at {:02d}:{:02d}:{:.2f}.".format(matched_hours, matched_minutes, matched_seconds))
+                    publicInfo = db.reference(f'publicPersonality/{matchindex+1}').get()
+                    print(publicInfo)
+                    strr= float(strr)
+                    timer=1
+                if timer==1:
+                    total_time_seconds = (float(hour) * 3600) + (float(minute) * 60) + (frame_count / frame_rate)
+                    
+                    # Calculate hours, minutes, and remaining seconds
+                    matched_hours = int(total_time_seconds // 3600)
+                    matched_minutes = int((total_time_seconds % 3600) // 60)
+                    y= str(matched_hours) + '.' + str(matched_minutes)
+                    strr=float(strr)
+                    y=float(y)
+                    if y - strr <0.01:
+                        pass
+                    else:
+                        print("Matched at {:02d}:{:02d}".format(matched_hours, matched_minutes))
+                        timer=0
 
                 id = Publicids[matchindex]
                 if counter == 0 :
@@ -172,6 +187,8 @@ while True:
             ref = db.reference(f'publicPersonality/{id}')
             publicInfo['total_Attendance'] += 1
             ref.child('total_Attendance').set(publicInfo['total_Attendance'])
+            publicInfo['date'] =publicInfo['date'] +" "+ str (day) +'-' + str(month) + "-" + str(year) + " at " + str(strr) + "\n " 
+            ref.child('date').set(publicInfo['date'])
             
                 
 

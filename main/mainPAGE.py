@@ -3,8 +3,8 @@ import subprocess
 
 # Mapping of hotspot numbers to names
 hotspot_names = {
-    1: "Faces2",
-    2: "elnahar",
+    1: "29-04-2024-14-00-AL24",
+    2: "18-11-2023-16-00-Ennahar",
     3: "elchourouk",
     4: "elbilad"
 }
