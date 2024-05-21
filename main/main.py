@@ -186,9 +186,23 @@ while True:
             #update attandance
             ref = db.reference(f'publicPersonality/{id}')
             publicInfo['total_Attendance'] += 1
+            namee=publicInfo['name']
             ref.child('total_Attendance').set(publicInfo['total_Attendance'])
+
             publicInfo['date'] =publicInfo['date'] +" "+ str (day) +'-' + str(month) + "-" + str(year) + " at " + str(strr) + "\n " 
             ref.child('date').set(publicInfo['date'])
+            file_path = os.path.join('main', 'rapport', f'{namee}.txt')
+
+            # Check if the file exists
+            if not os.path.exists(file_path):
+                # If the file doesn't exist, create it
+                with open(file_path, 'w') as file:
+                    pass  # This just creates an empty file
+
+            # Open the file in append mode
+            with open(file_path, 'a') as file:
+                # Append the date information to the file
+                file.write(publicInfo['date'] + "\n")
             
                 
 

@@ -15,67 +15,68 @@ def fetch_data_by_id(person_id):
         ref = db.reference(f'publicPersonality/{person_id}')
         person_data = ref.get()
         if person_data:
-            return person_data.get('name', 'Name not found')
+            return person_data.get('name', 'Nom non trouvé')
         else:
-            return 'Person not found'
+            return 'Personne non trouvée'
     except Exception as e:
-        return f'Error: {e}'
+        return f'Erreur: {e}'
 
 def delete_data_by_id(person_id):
     try:
         ref = db.reference(f'publicPersonality/{person_id}')
         person_data = ref.get()
         if person_data:
-            confirm = messagebox.askquestion("Confirm Deletion", f"Are you sure you want to delete {person_data.get('name')}?")
+            confirm = messagebox.askquestion("Confirmation de suppression", f"Êtes-vous sûr de vouloir supprimer {person_data.get('name')} ?")
+
             if confirm == 'yes':
                 ref.delete()
                 # Delete image file
                 image_path = f'images/{person_id}.jpg'
                 if os.path.exists(image_path):
                     os.remove(image_path)
-                    return f"Data for {person_data.get('name')} and image deleted successfully!"
+                    return f"Données pour {person_data.get('name')} et image supprimées avec succès !"
                 else:
-                    return f"Data for {person_data.get('name')} deleted from Firebase, but image not found locally."
+                    return f"Données pour {person_data.get('name')} supprimées de Firebase, mais image non trouvée localement."
             else:
-                return "Deletion cancelled."
+                return "Suppression annulée."
         else:
-            return 'Person not found'
+            return 'Personne non trouvée'
     except Exception as e:
-        return f'Error: {e}'
+        return f'Erreur: {e}'
 
 def fetch_button_clicked():
     person_id = id_entry.get().strip()
     name = fetch_data_by_id(person_id)
-    result_label.config(text=f"Name: {name}")
+    result_label.config(text=f"Nom: {name}")
 
 def delete_button_clicked():
     person_id = id_entry.get().strip()
     result = delete_data_by_id(person_id)
-    messagebox.showinfo("Deletion Result", result)
+    messagebox.showinfo("Résultat de la suppression", result)
 
-# Create GUI window
+# Créer une fenêtre GUI
 window = tk.Tk()
 window.configure(bg='#5678F0')
-window.title("Suprimmer personne")
+window.title("Supprimer une personne")
 icon_image = tk.PhotoImage(file='main/logoAPP.png')
 window.iconphoto(True, icon_image)
 
-# Create ID input field
-id_label = tk.Label(window, text="Entrez ID de la personne que vous souhaitez supprimer :",width="60",bg="#5678F0",fg="white",font=(20))
+# Créer un champ d'entrée ID
+id_label = tk.Label(window, text="Entrez l'ID de la personne que vous souhaitez supprimer :",width="60",bg="#5678F0",fg="white",font=(20))
 id_label.pack()
 id_entry = tk.Entry(window, width=10,font=20)
 id_entry.pack()
 
-# Create buttons for fetch and delete operations
+# Créer des boutons pour les opérations de récupération et de suppression
 fetch_button = tk.Button(window, text="Récupérer le nom", command=fetch_button_clicked,width=20)
 fetch_button.pack(pady=20)
 
 delete_button = tk.Button(window, text="Supprimer les données", command=delete_button_clicked)
 delete_button.pack(pady=10)
 
-# Create label to display result
+# Créer une étiquette pour afficher le résultat
 result_label = tk.Label(window, text="", font=("Helvetica", 12))
 result_label.pack(pady=20)
 
-# Run the main GUI event loop
+# Exécuter la boucle d'événements GUI principale
 window.mainloop()

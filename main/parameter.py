@@ -46,7 +46,17 @@ def create_buttons_on_canvas(canvas):
                 subprocess.run(["python", "main/addperson.py"])
 
             button.config(command=open_add_person_script)
+            
+        elif text == "Supprimer personne":
+            def open_delete_person_script():
+                subprocess.run(["python", "main/deletePerson.py"])
 
+            button.config(command=open_delete_person_script)
+        elif text == "Afficher rapport":
+            def open_delete_person_script():
+                subprocess.run(["python", "main/rapport.py"])
+
+            button.config(command=open_delete_person_script)
         button_window = canvas.create_window(x, y, anchor='nw', window=button)
 
         # Add the button to the canvas
@@ -62,7 +72,7 @@ def main():
     root.iconphoto(True, icon_image)
 
     # Load the background image
-    image_path = "main/parameterPAGE.png"  # Replace this with your image path
+    image_path = "main/Group 19.png"  # Replace this with your image path
     image = Image.open(image_path)
     photo = ImageTk.PhotoImage(image)
 

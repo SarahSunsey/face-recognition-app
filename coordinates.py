@@ -17,7 +17,7 @@ def click_event(event, x, y, flags, param):
         cv2.imshow("Image", img)
 
 # Read the image
-img = cv2.imread("main/parameterPAGE.png")
+img = cv2.imread("main/menu.png")
 
 # Create a window for displaying the image
 cv2.namedWindow("Image")

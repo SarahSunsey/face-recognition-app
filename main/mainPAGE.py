@@ -5,7 +5,7 @@ import subprocess
 hotspot_names = {
     1: "29-04-2024-14-00-AL24",
     2: "18-11-2023-16-00-Ennahar",
-    3: "elchourouk",
+    3: "22-08-2023-13-00-Elchourouk",
     4: "elbilad"
 }
 
@@ -40,7 +40,7 @@ def launch_parameter():
 # Create main window
 window = tk.Tk()
 window.title("Page D'acceuil")
-icon_image = tk.PhotoImage(file='main/logoAPP.png')
+icon_image = tk.PhotoImage(file='main/page.png')
 window.iconphoto(True, icon_image)
 
 # Load the image containing clickable areas
