@@ -49,13 +49,14 @@ def extract_date_time(filename):
     year=parts[2]
     hour=parts[3]
     minute=parts[4]
-    print(day,month,year,hour,minute)
-    return day,month,year,hour,minute
+    chanel= parts[5]
+    print(day,month,year,hour,minute,chanel)
+    return day,month,year,hour,minute,chanel
   except ValueError:
     return "Invalid filename format"  # Handle format errors
 # Open the video file
 video_path = f'main/TV/{hotspot_name}.mp4'
-day, month, year, hour, minute = extract_date_time(hotspot_name)
+day, month, year, hour, minute,chanel = extract_date_time(hotspot_name)
 print(day,month,year,hour,minute)
 cap = cv2.VideoCapture(video_path)
 imgpublic=[]
@@ -189,7 +190,7 @@ while True:
             namee=publicInfo['name']
             ref.child('total_Attendance').set(publicInfo['total_Attendance'])
 
-            publicInfo['date'] =publicInfo['date'] +" "+ str (day) +'-' + str(month) + "-" + str(year) + " at " + str(strr) + "\n " 
+            publicInfo['date'] =publicInfo['date'] +" "+ str (day) +'-' + str(month) + "-" + str(year) + " at " + str(strr) + " in " + str(chanel)+ "\n " 
             ref.child('date').set(publicInfo['date'])
             file_path = os.path.join('main', 'rapport', f'{namee}.txt')
 

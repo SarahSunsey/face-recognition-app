@@ -3,6 +3,7 @@ from firebase_admin import credentials, db
 import tkinter as tk
 from tkinter import messagebox
 import os
+import subprocess
 
 # Initialize Firebase app
 cred = credentials.Certificate("main/serviceAccountkey.json")
@@ -34,12 +35,15 @@ def delete_data_by_id(person_id):
                 image_path = f'images/{person_id}.jpg'
                 if os.path.exists(image_path):
                     os.remove(image_path)
+                    subprocess.run(["python", "main/encodegenerator.py"])
                     return f"Données pour {person_data.get('name')} et image supprimées avec succès !"
                 else:
                     return f"Données pour {person_data.get('name')} supprimées de Firebase, mais image non trouvée localement."
             else:
+                
                 return "Suppression annulée."
         else:
+           
             return 'Personne non trouvée'
     except Exception as e:
         return f'Erreur: {e}'
@@ -77,6 +81,7 @@ delete_button.pack(pady=10)
 # Créer une étiquette pour afficher le résultat
 result_label = tk.Label(window, text="", font=("Helvetica", 12))
 result_label.pack(pady=20)
+
 
 # Exécuter la boucle d'événements GUI principale
 window.mainloop()

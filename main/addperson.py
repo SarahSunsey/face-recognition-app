@@ -5,6 +5,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 import tkinter as tk
+import subprocess
 
 cred = credentials.Certificate("main/serviceAccountkey.json")
 
@@ -80,6 +81,11 @@ def save_user_info():
         # Update the database with the user information under the generated key
         
         message_label.config(text="Information saved successfully!", fg="green")
+        
+        subprocess.run(["python", "images/resize.py"])
+        subprocess.run(["python", "main/encodegenerator.py"])
+        
+        
 
     except Exception as e:
         message_label.config(text=f"Error saving data: {e}", fg="red")
@@ -132,6 +138,8 @@ message_label.grid(row=3, column=0, columnspan=2, padx=5, pady=5)
 # Submit button
 submit_button = tk.Button(window, text="Soumettre",width="20", command=save_user_info, bg="#82EE5C", fg="black")  # Set background color to blue and foreground (text) color to white
 submit_button.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
+
+
 
 window.mainloop()
 
